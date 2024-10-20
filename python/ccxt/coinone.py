@@ -599,10 +599,8 @@ class coinone(Exchange, ImplicitAPI):
         #     }
         #
         id = self.safe_string(order, 'orderId')
-        baseId = self.safe_string(order, 'baseCurrency')
-        quoteId = self.safe_string(order, 'targetCurrency')
-        base = self.safe_currency_code(baseId, market['base'])
-        quote = self.safe_currency_code(quoteId, market['quote'])
+        base = self.safe_string(order, 'baseCurrency', market['base'])
+        quote = self.safe_string(order, 'targetCurrency', market['quote'])
         symbol = base + '/' + quote
         market = self.safe_market(symbol, market, '/')
         timestamp = self.safe_timestamp_2(order, 'timestamp', 'updatedAt')
@@ -840,7 +838,7 @@ class coinone(Exchange, ImplicitAPI):
             payload = self.string_to_base64(json)
             body = payload
             secret = self.secret.upper()
-            signature = self.hmac(payload, self.encode(secret), hashlib.sha512)
+            signature = self.hmac(self.encode(payload), self.encode(secret), hashlib.sha512)
             headers = {
                 'Content-Type': 'application/json',
                 'X-COINONE-PAYLOAD': payload,
